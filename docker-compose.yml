@@ -1,0 +1,38 @@
+version: '3'
+services:
+  db:
+    image: mysql:5.7
+    container_name: mysql
+    restart: unless-stopped
+    volumes:
+       - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: SecretPass
+      MYSQL_DATABASE: db_test
+      MYSQL_USER: db_user
+      MYSQL_PASSWORD: db_password
+    ports: 
+      - "3306:3306"
+    networks:
+      - labnet
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: SecretPass
+    networks:
+      - labnet
+#Docker Networks
+networks:
+  labnet: 
+    external:
+      name: labnet
+volumes:
+  db_data:
